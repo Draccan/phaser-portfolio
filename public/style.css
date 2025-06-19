@@ -1,0 +1,19 @@
+.about-box {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    width: 300px;
+    max-width: 80vw;
+}
+
+.about-box a {
+    color: #00aaff;
+    text-decoration: none;
+}
+
+.about-box a:hover {
+    text-decoration: underline;
+}

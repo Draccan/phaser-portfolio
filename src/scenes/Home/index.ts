@@ -1,14 +1,16 @@
 import Phaser from "phaser";
 
-import { SceneNames } from "../commons/enums";
+import { SceneName } from "../commons/enums";
 
 export default class HomeScene extends Phaser.Scene {
     constructor() {
-        super(SceneNames.Home);
+        super(SceneName.Home);
     }
 
     preload() {
-        this.load.image("background", "/background.png");
+        if (!this.textures.exists("background")) {
+            this.load.image("background", "/background.png");
+        }
     }
 
     create() {
@@ -22,7 +24,7 @@ export default class HomeScene extends Phaser.Scene {
         const buttons = [
             {
                 label: "Play Game",
-                onClick: () => console.log("Load game scene..."),
+                onClick: () => this.scene.start(SceneName.Game),
             },
             {
                 label: "Blog",
@@ -42,7 +44,7 @@ export default class HomeScene extends Phaser.Scene {
             },
             {
                 label: "About",
-                onClick: () => this.scene.start(SceneNames.About),
+                onClick: () => this.scene.start(SceneName.About),
             },
         ];
 
