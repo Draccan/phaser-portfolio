@@ -35,7 +35,10 @@ export default class HomeScene extends Phaser.Scene {
             {
                 label: "GitHub",
                 onClick: () =>
-                    window.open("https://github.com/Draccan", "_blank"),
+                    window.open(
+                        "https://github.com/Draccan/phaser-portfolio",
+                        "_blank",
+                    ),
             },
             {
                 label: "About",
