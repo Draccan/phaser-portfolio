@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-import { ButtonType, createButton } from "../../components/Button";
+import { ButtonStyle, ButtonType, createButton } from "../../components/Button";
 import { createMainText } from "../../components/MainText";
 import BaseScene from "../BaseScene";
 import { SceneName } from "../commons/enums";
@@ -37,24 +37,35 @@ export default class GameScene extends BaseScene {
             centerY,
         );
 
-        const startButton = createButton(
+        createButton(
             this,
             ButtonType.Primary,
+            ButtonStyle.Default,
             "Start Game",
             centerX,
             centerY + 100,
+            {
+                type: "pointerdown",
+                function: () => {
+                    console.log("Game started!");
+                    // Add game logic here
+                },
+            },
         );
 
-        startButton.on("pointerdown", () => {
-            console.log("Game started!");
-            // Add game logic here
-        });
-
-        this.input.once("pointerdown", () => {
-            localStorage.removeItem("lastScene");
-            // TODO remove in automatico tipo all'unmount qualcosa di simile e mettere logica in baseScene?!
-            // + Bottoni menù con utilizzo componente
-            this.scene.start(SceneName.Home);
-        });
+        createButton(
+            this,
+            ButtonType.Tertiary,
+            ButtonStyle.Default,
+            "Back to Home",
+            100,
+            50,
+            {
+                type: "pointerdown",
+                function: () => {
+                    this.scene.start(SceneName.Home);
+                },
+            },
+        );
     }
 }

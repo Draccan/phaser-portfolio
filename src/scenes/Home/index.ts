@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 
+import { ButtonStyle, ButtonType, createButton } from "../../components/Button";
 import { SceneName } from "../commons/enums";
 
 export default class HomeScene extends Phaser.Scene {
@@ -50,23 +51,14 @@ export default class HomeScene extends Phaser.Scene {
 
         buttons.forEach((button, index) => {
             const yOffset = index * 70;
-            const text = this.add
-                .text(centerX, centerY + yOffset, button.label, {
-                    fontSize: "32px",
-                    color: "#ffffff",
-                    backgroundColor: "#000000aa",
-                    padding: { x: 20, y: 10 },
-                    align: "center",
-                })
-                .setOrigin(0.5)
-                .setInteractive({ useHandCursor: true })
-                .on("pointerdown", button.onClick);
-
-            text.on("pointerover", () =>
-                text.setStyle({ backgroundColor: "#444" }),
-            );
-            text.on("pointerout", () =>
-                text.setStyle({ backgroundColor: "#000000aa" }),
+            createButton(
+                this,
+                ButtonType.Primary,
+                ButtonStyle.Ghost,
+                button.label,
+                centerX,
+                centerY + yOffset,
+                { type: "pointerdown", function: button.onClick },
             );
         });
     }
