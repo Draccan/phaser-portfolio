@@ -2,4 +2,5 @@ export enum SceneName {
     Home = "Home",
     About = "About",
     Game = "Game",
+    UFOGame = "UFOGame",
 }

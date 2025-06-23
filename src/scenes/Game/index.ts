@@ -1,17 +1,15 @@
-import Phaser from "phaser";
-
 import { ButtonStyle, ButtonType, createButton } from "../../components/Button";
 import { createMainText } from "../../components/MainText";
 import BaseScene from "../BaseScene";
 import { SceneName } from "../commons/enums";
 
 export default class GameScene extends BaseScene {
-    protected initScene(): void {
-        console.log("GameScene initialized");
-    }
-
     constructor() {
         super(SceneName.Game);
+    }
+
+    protected initScene(): void {
+        console.log("GameScene initialized");
     }
 
     preload() {
@@ -47,23 +45,7 @@ export default class GameScene extends BaseScene {
             {
                 type: "pointerdown",
                 function: () => {
-                    console.log("Game started!");
-                    // Add game logic here
-                },
-            },
-        );
-
-        createButton(
-            this,
-            ButtonType.Tertiary,
-            ButtonStyle.Default,
-            "Back to Home",
-            100,
-            50,
-            {
-                type: "pointerdown",
-                function: () => {
-                    this.scene.start(SceneName.Home);
+                    this.scene.start(SceneName.UFOGame);
                 },
             },
         );

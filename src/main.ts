@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import AboutScene from "./scenes/About";
 import { SceneName } from "./scenes/commons/enums";
 import GameScene from "./scenes/Game";
+import UFOGameScene from "./scenes/Game/UFOGame";
 import HomeScene from "./scenes/Home";
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -18,10 +19,21 @@ const config: Phaser.Types.Core.GameConfig = {
         mode: Phaser.Scale.ScaleModes.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
-    scene: [HomeScene, AboutScene, GameScene],
+    physics: {
+        default: "arcade",
+        arcade: {
+            debug: false,
+        },
+    },
+    callbacks: {
+        postBoot: (game) => {
+            const lastScene =
+                localStorage.getItem("lastScene") || SceneName.Home;
+            game.scene.stop(SceneName.Home);
+            game.scene.start(lastScene);
+        },
+    },
+    scene: [HomeScene, AboutScene, GameScene, UFOGameScene],
 };
 
-const lastScene = localStorage.getItem("lastScene") || SceneName.Home;
-
 const game = new Phaser.Game(config);
-game.scene.start(lastScene);
