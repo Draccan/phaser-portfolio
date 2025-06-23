@@ -1,3 +1,3 @@
 - utilizzo di internazionalizzazione o simili
-- primo gioco come Memory per esempio o UfoNova
-- Secondo gioco qualcosa di algoritmicamente interessante
+- secondo gioco come Memory per esempio
+- terzo gioco qualcosa di algoritmicamente interessante
