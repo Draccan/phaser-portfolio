@@ -1,17 +1,32 @@
-import {
-    ButtonStyle,
-    ButtonType,
-    createButton,
-} from "../../../components/Button";
+import createGameOverText from "../../../components/GameOverText";
+import UFOPlayer from "../../../model/implementation/UFOPlayer";
+import GameScene from "../GameScene";
 import { SceneName } from "../../commons/enums";
-import BaseScene from "../../BaseScene";
 
-export default class UFOGameScene extends BaseScene {
-    private ufo!: Phaser.Physics.Arcade.Sprite;
+const GAME_DURATION = 30000;
+
+enum ImageKeys {
+    Ufo = "ufo",
+    Meteor = "meteor",
+    UfoGameBackground = "ufoGameBackground",
+}
+
+enum AudioKeys {
+    Explosion = "explosion",
+    Space = "space",
+    Win = "win",
+}
+
+export default class UFOGameScene extends GameScene {
+    private ufo!: UFOPlayer;
     private meteors!: Phaser.Physics.Arcade.Group;
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
     private timerMessage!: Phaser.GameObjects.Text;
-    private timerEvent!: Phaser.Time.TimerEvent;
+    private winTimer!: Phaser.Time.TimerEvent;
+    private spaceSound!:
+        | Phaser.Sound.NoAudioSound
+        | Phaser.Sound.HTML5AudioSound
+        | Phaser.Sound.WebAudioSound;
     private gameOver = false;
 
     constructor() {
@@ -23,36 +38,38 @@ export default class UFOGameScene extends BaseScene {
     }
 
     preload() {
-        this.load.image("ufo", "assets/ufo.png");
-        this.load.image("meteor", "assets/meteor.png");
-        this.load.image("ufoGameBackground", "assets/spaceBackground.png");
+        super.preload();
+        this.load.image(ImageKeys.Ufo, "assets/ufo.png");
+        this.load.image(ImageKeys.Meteor, "assets/meteor.png");
+        this.load.image(
+            ImageKeys.UfoGameBackground,
+            "assets/spaceBackground.png",
+        );
+        this.load.audio(AudioKeys.Explosion, "assets/sounds/sonicBoom.mp3");
+        this.load.audio(AudioKeys.Space, "assets/sounds/space.mp3");
     }
 
     create() {
         super.create();
 
+        this.spaceSound = this.sound.add(AudioKeys.Space);
+        this.spaceSound.play();
+
         this.add
             .image(
                 this.scale.width / 2,
                 this.scale.height / 2,
-                "ufoGameBackground",
+                ImageKeys.UfoGameBackground,
             )
             .setDisplaySize(this.scale.width, this.scale.height);
 
-        this.ufo = this.physics.add
-            .sprite(this.scale.width / 2, this.scale.height - 50, "ufo")
-            .setDisplaySize(64, 64)
-            .setOffset(0, 0)
-            .setCollideWorldBounds(true);
-
-        // Docs: setSize is for collision size
-        this.ufo.setSize(this.ufo.width, this.ufo.height / 2);
+        this.ufo = new UFOPlayer(this, ImageKeys.Ufo);
 
         this.cursors = this.input.keyboard!.createCursorKeys();
         this.meteors = this.physics.add.group();
 
         this.physics.add.collider(
-            this.ufo,
+            this.ufo.getSprite(),
             this.meteors,
             this.handleCollision,
             undefined,
@@ -63,8 +80,8 @@ export default class UFOGameScene extends BaseScene {
             fontSize: "24px",
             color: "#ffffff",
         });
-        this.timerEvent = this.time.addEvent({
-            delay: 30000,
+        this.winTimer = this.time.addEvent({
+            delay: GAME_DURATION,
             callback: this.handleWin,
             callbackScope: this,
         });
@@ -80,16 +97,19 @@ export default class UFOGameScene extends BaseScene {
     update() {
         if (this.gameOver) return;
 
-        const speed = 200;
         if (this.cursors.left?.isDown) {
-            this.ufo.setVelocityX(-speed);
+            this.ufo.moveLeft();
         } else if (this.cursors.right?.isDown) {
-            this.ufo.setVelocityX(speed);
+            this.ufo.moveRight();
         } else {
-            this.ufo.setVelocityX(0);
+            this.ufo.stop();
         }
 
-        const remaining = Math.ceil(this.timerEvent.getRemaining() / 1000);
+        this.updateRemainingTimeMessage();
+    }
+
+    private updateRemainingTimeMessage() {
+        const remaining = Math.ceil(this.winTimer.getRemaining() / 1000);
         this.timerMessage.setText(remaining.toString());
     }
 
@@ -100,7 +120,7 @@ export default class UFOGameScene extends BaseScene {
                 this.meteors.create(
                     xAssisRandomPoint,
                     0,
-                    "meteor",
+                    ImageKeys.Meteor,
                 ) as Phaser.Physics.Arcade.Sprite
             )
                 .setVelocityY(Phaser.Math.Between(100, 400))
@@ -115,29 +135,18 @@ export default class UFOGameScene extends BaseScene {
     }
 
     private handleCollision() {
+        this.spaceSound.stop();
         this.gameOver = true;
+        this.sound.play(AudioKeys.Explosion);
         this.physics.pause();
-        this.add
-            .text(
-                this.scale.width / 2,
-                this.scale.height / 2,
-                "💥 Game Over!",
-                {
-                    fontSize: "32px",
-                    color: "#ff0000",
-                },
-            )
-            .setOrigin(0.5);
+        this.winTimer.destroy();
+        createGameOverText(this);
     }
 
-    private handleWin() {
+    protected override handleWin() {
+        this.timerMessage.setText("0");
+        this.spaceSound.stop();
         this.gameOver = true;
-        this.physics.pause();
-        this.add
-            .text(this.scale.width / 2, this.scale.height / 2, "🎉 You Win!", {
-                fontSize: "32px",
-                color: "#00ff00",
-            })
-            .setOrigin(0.5);
+        super.handleWin();
     }
 }
