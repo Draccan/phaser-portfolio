@@ -3,7 +3,7 @@ import UFOPlayer from "../../../model/implementation/UFOPlayer";
 import GameScene from "../GameScene";
 import { SceneName } from "../../commons/enums";
 
-const GAME_DURATION = 30000;
+const GAME_DURATION = 3000;
 
 enum ImageKeys {
     Ufo = "ufo",
@@ -147,6 +147,6 @@ export default class UFOGameScene extends GameScene {
         this.timerMessage.setText("0");
         this.spaceSound.stop();
         this.gameOver = true;
-        super.handleWin();
+        super.handleWin(SceneName.About);
     }
 }
