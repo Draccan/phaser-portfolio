@@ -147,6 +147,6 @@ export default class UFOGameScene extends GameScene {
         this.timerMessage.setText("0");
         this.spaceSound.stop();
         this.gameOver = true;
-        super.handleWin(SceneName.About);
+        super.handleWin(SceneName.MemoryGame);
     }
 }

@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import AboutScene from "./scenes/About";
 import { SceneName } from "./scenes/commons/enums";
 import GameScene from "./scenes/Game";
+import MemoryGameScene from "./scenes/Game/MemoryGame";
 import UFOGameScene from "./scenes/Game/UFOGame";
 import HomeScene from "./scenes/Home";
 
@@ -33,7 +34,7 @@ const config: Phaser.Types.Core.GameConfig = {
             game.scene.start(lastScene);
         },
     },
-    scene: [HomeScene, AboutScene, GameScene, UFOGameScene],
+    scene: [HomeScene, AboutScene, GameScene, UFOGameScene, MemoryGameScene],
 };
 
 const game = new Phaser.Game(config);
